@@ -1,0 +1,14 @@
+---
+- name: 1. CONFIGURE NETWORK ROUTER
+  hosts: routers
+  gather_facts: no
+  tasks:
+    - name: Import Router Configurations
+      import_tasks: router_tasks.yml
+
+- name: 2. GATHER LINUX SERVER STATISTICS
+  hosts: linux_servers
+  gather_facts: yes
+  tasks:
+    - name: Import Linux Stats Configurations
+      import_tasks: linux_tasks.yml

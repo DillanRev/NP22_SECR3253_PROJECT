@@ -2,6 +2,7 @@ all:
   children:
     routers:
       hosts:
+        #placeholder cisco router parameter, update necessarily 
         cisco_router:
           # later, change this to the real router IP
           # only placeholder ip now (ansible_host)
