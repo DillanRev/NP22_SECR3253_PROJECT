@@ -1,0 +1,18 @@
+all:
+  children:
+    routers:
+      hosts:
+        cisco_router:
+          # later, change this to the real router IP
+          # only placeholder ip now (ansible_host)
+          ansible_host: 192.168.1.100
+          ansible_user: admin
+          ansible_password: password
+          ansible_network_os: cisco.ios
+          ansible_connection: network_cli
+
+    linux_servers:
+      hosts:
+        ubuntu-target:
+          # this tells ansible to talk directly to the docker container
+          ansible_connection: docker

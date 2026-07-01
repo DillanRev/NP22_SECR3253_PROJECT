@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  linux-target:
+    image: ubuntu:latest
+    container_name: ubuntu-target
+    command: sleep infinity
+    # i use 'sleep infinity' to keep the container awake 
+    # so ansible can talk to it
