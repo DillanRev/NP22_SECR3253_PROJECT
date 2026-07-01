@@ -1,0 +1,13 @@
+# Ignore Ansible retry files
+*.retry
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore OS junk files
+.DS_Store
+Thumbs.db
+
+# Ignore local environment variables or secret keys
+.env
