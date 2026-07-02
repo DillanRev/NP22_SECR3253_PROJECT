@@ -45,6 +45,17 @@ The entire project runs in a straightforward 4-step loop:
 4. **The Admin Phase:** Ansible connects straight into the running Docker container, collects the requested hardware and process stats, and prints a neat summary directly to your terminal window.
 
 ---
+**Cisco Router Configuration:**
+- [x] Configure IP Addresses & Interface Descriptions
+- [x] Configure User Accounts & Banner Message
+- [x] Configure Static Routes
+- [x] Retrieve Device Information
+
+**Ubuntu Linux Server Analytics:**
+- [x] Hostname, Date, and Time
+- [x] CPU and Memory (RAM) Usage
+- [x] Disk Space Utilization
+- [x] Logged-in Users & Top 5 Processes by CPU
 
 ## Dependencies
 
