@@ -1,8 +1,9 @@
 version: '3.8'
+
 services:
-  linux-target:
-    image: ubuntu:latest
-    container_name: ubuntu-target
-    command: sleep infinity
-    # i use 'sleep infinity' to keep the container awake 
-    # so ansible can talk to it
+  ubuntu-target:
+    build: .
+    container_name: linux_server_target
+    ports:
+      - "2222:22"            # port 2222 to the container's SSH port 22
+    restart: unless-stopped

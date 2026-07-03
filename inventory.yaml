@@ -6,11 +6,11 @@ all:
         cisco_router:
           # later, change this to the real router IP
           # only placeholder ip now (ansible_host)
-          ansible_host: 192.168.1.100
-          ansible_user: admin
-          ansible_password: password
-          ansible_network_os: cisco.ios
-          ansible_connection: network_cli
+          ansible_host: 127.0.0.1
+          ansible_user: 2222
+          ansible_password: ansible_user
+          ansible_network_os: utmpassword123
+          ansible_connection: ssh
 
     linux_servers:
       hosts:
