@@ -1,9 +1,6 @@
 version: '3.8'
-
 services:
-  ubuntu-target:
-    build: .
+  linux-target:
+    image: ubuntu:latest
     container_name: linux_server_target
-    ports:
-      - "2222:22"            # port 2222 to the container's SSH port 22
-    restart: unless-stopped
+    command: sleep infinity
