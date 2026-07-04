@@ -1,0 +1,52 @@
+---
+#Interface Descriptions,
+# Static Routes, and Device Info Retrieval
+
+# -TASK 1: Configure Interface Descriptions
+
+- name: "KHALID | Configure interface description - GigabitEthernet0/0"
+  cisco.ios.ios_config:
+    lines:
+      - description Uplink to ISP
+      - no shutdown
+    parents: interface GigabitEthernet0/0
+
+- name: "KHALID | Configure interface description - GigabitEthernet0/1"
+  cisco.ios.ios_config:
+    lines:
+      - description LAN - Engineering VLAN 10
+      - no shutdown
+    parents: interface GigabitEthernet0/1
+
+# -TASK 2: Configure Static Route 
+
+- name: "KHALID | Configure static route to remote network"
+  cisco.ios.ios_static_routes:
+    config:
+      - address_family: ipv4
+        routes:
+          - dest: 10.0.0.0/24
+            next_hop:
+              - forward_router_address: 192.168.1.1
+    state: merged
+
+# -TASK 3: Retrieve Device Information
+
+- name: "KHALID | Gather router device facts"
+  cisco.ios.ios_facts:
+    gather_subset:
+      - hardware
+      - interfaces
+
+- name: "KHALID | Display retrieved device information"
+  ansible.builtin.debug:
+    msg: |
+      ============================================
+         DEVICE INFORMATION RETRIEVED
+      ============================================
+      Hostname       : {{ ansible_net_hostname }}
+      Model          : {{ ansible_net_model }}
+      OS Version     : {{ ansible_net_version }}
+      Serial Number  : {{ ansible_net_serialnum }}
+      Uptime         : {{ ansible_net_uptime }}
+      ============================================
