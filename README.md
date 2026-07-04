@@ -9,7 +9,7 @@ A simple automation project using **Ansible** and **Docker** to handle two thing
 
 ---
 
-## Project Structure
+## 📂 Project Structure
 
 Here is what every file in this directory actually does:
 
@@ -24,9 +24,9 @@ Here is what every file in this directory actually does:
 *   **`router_tasks.yml`** *(Student 2 & 3)*
     The empty file where the network configurations go (setting up IPs, local user accounts, banners, interface descriptions, and static routes).
 *   **`linux_tasks.yml`** *(Student 4 & 5)*
-    The empty file where the Linux automation goes. It will run commands to grab system stats like hostname, CPU usage, RAM, and the top 5 running processes.
-*   **`report_template.j2`**
-    A Jinja2 template file that takes the raw, messy JSON data collected from the Linux server and formats it into a clean, human-readable terminal display.
+    The empty file where the Linux automation goes. It will run commands to grab system stats like hostname, CPU usage, RAM, and the top 5 running processes, outputting them to a JSON file.
+*   **`display_parser.py`**
+    A custom Python script that ingests the raw JSON output from the Linux server metrics and renders a human-readable system health dashboard directly to the terminal.
 *   **`docker-compose.yml` & `Dockerfile`**
     Spins up a custom, lightweight Ubuntu container with SSH and Python pre-installed. This acts as our "target Linux server" so we have something live to test our scripts against without breaking our actual laptops.
 *   **`pre_flight.py`**
@@ -34,7 +34,7 @@ Here is what every file in this directory actually does:
 
 ---
 
-## How It Works
+## ⚙️ How It Works
 
 The entire project runs in a straightforward 4-step loop:
 
@@ -43,14 +43,14 @@ The entire project runs in a straightforward 4-step loop:
                                           ├──► 1. Connects to Router -> Applies router_tasks.yml
                                           │
                                           └──► 2. Connects to Docker Container -> Runs linux_tasks.yml
-                                                     ↳ Passes data to report_template.j2
-                                                     ↳ Prints live CPU/RAM stats to your screen
+                                                     ↳ Saves data to linux_stats_output.json
+                                                     ↳ display_parser.py reads JSON and prints stats to screen
 
 1. **The Sandbox:** You start the Docker container to create a fake, isolated Linux machine sitting on your laptop.
 2. **The Pre-Flight:** You run the Python script to ensure the network is reachable.
 3. **The Trigger:** You run the main Ansible playbook command.
 4. **The Network Phase:** Ansible looks at the inventory file, connects to the simulated router, pushes all the required network configurations, and pulls back the basic device info.
-5. **The Admin Phase:** Ansible connects straight into the running Docker container, collects the requested hardware and process stats, formats them via Jinja2, and prints a neat summary directly to your terminal window.
+5. **The Admin Phase:** Ansible connects straight into the running Docker container, collects the requested hardware and process stats, and saves them locally. Finally, the Python parser executes to display the neat summary to your terminal window.
 
 ---
 
@@ -69,19 +69,8 @@ The entire project runs in a straightforward 4-step loop:
 - [ ] Logged-in Users & Top 5 Processes by CPU
 
 ---
-**Cisco Router Configuration:**
-- [x] Configure IP Addresses & Interface Descriptions
-- [x] Configure User Accounts & Banner Message
-- [x] Configure Static Routes
-- [x] Retrieve Device Information
 
-**Ubuntu Linux Server Analytics:**
-- [x] Hostname, Date, and Time
-- [x] CPU and Memory (RAM) Usage
-- [x] Disk Space Utilization
-- [x] Logged-in Users & Top 5 Processes by CPU
-
-## Dependencies
+## 🛠️ Dependencies
 
 To run this automation stack, you only need two things installed on your system:
 
@@ -90,7 +79,7 @@ To run this automation stack, you only need two things installed on your system:
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 **1. Start the local Linux target container:**
 `docker-compose up -d --build`
@@ -100,3 +89,6 @@ To run this automation stack, you only need two things installed on your system:
 
 **3. Run the automation script:**
 `ansible-playbook main_playbook.yml`
+
+**4. Generate the terminal dashboard:**
+`python3 display_parser.py`
