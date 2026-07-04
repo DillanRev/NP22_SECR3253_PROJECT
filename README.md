@@ -9,7 +9,7 @@ A simple automation project using **Ansible** and **Docker** to handle two thing
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 Here is what every file in this directory actually does:
 
@@ -34,11 +34,11 @@ Here is what every file in this directory actually does:
 
 ---
 
-## ⚙️ How It Works
+## How It Works
 
-The entire project runs in a straightforward 4-step loop:
+The entire project runs in a 4 step loop:
 
-    [ Your Laptop ] ──(Runs Ansible)──► Reads inventory.yaml to find targets
+    [ Computer ] ──(Runs Ansible)──► Reads inventory.yaml to find targets
                                           │
                                           ├──► 1. Connects to Router -> Applies router_tasks.yml
                                           │
@@ -54,7 +54,7 @@ The entire project runs in a straightforward 4-step loop:
 
 ---
 
-## ✅ Project Requirements Fulfilled
+## Project Requirements Fulfilled
 
 **Cisco Router Configuration:**
 - [ ] Configure IP Addresses & Interface Descriptions
@@ -70,7 +70,7 @@ The entire project runs in a straightforward 4-step loop:
 
 ---
 
-## 🛠️ Dependencies
+## Dependencies
 
 To run this automation stack, you only need two things installed on your system:
 
@@ -79,7 +79,7 @@ To run this automation stack, you only need two things installed on your system:
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 **1. Start the local Linux target container:**
 `docker-compose up -d --build`
