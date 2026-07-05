@@ -67,7 +67,8 @@
 - name: 10. Write merged stats to output JSON
   copy:
     content: "{{ combined_stats_t5 | to_nice_json }}"
-    dest: "{{playbook_dir}}/linux_stats_output.json"
+    dest: "./linux_stats_output.json"
+  delegate_to: localhost
 
 # -TASK 11: Final Output Display
 - name: 11. Final merged display of linux_stats_output.json
