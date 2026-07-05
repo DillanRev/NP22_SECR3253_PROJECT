@@ -25,5 +25,10 @@
       - no shutdown
     parents: interface GigabitEthernet1
 
+- name: VERIFICATION - Check interface status
+  cisco.ios.ios_command:
+    commands: show ip interface brief
+  register: interface_status
+
     - name: Import Khalid's tasks (Interface Descriptions, Static Route, Device Info)
   import_tasks: router_tasks_khalid.yml
