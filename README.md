@@ -1,94 +1,116 @@
 # SECR3253 Network Programming - Group Automation Project
-# DILLAN REVADA A23CS0290
-# DANIEL Tri Hendarto Tanra A23CS4040
-# ABDELRAHMAN Osama Said Abdelmobdy A23CS4001
-# KHALID  A23CS4042
-# MUHAMMAD ANGWIN SAYRESTIAN A20EC0313
 
-A simple automation project using **Ansible** and **Docker** to handle two things: configuring a Cisco router and scraping health metrics from a Linux server.
+**Project Status: COMPLETED**
 
----
+## Team Members & Collaboration Roles
 
-## Project Structure
-
-Here is what every file in this directory actually does:
-
-*   **`.github/workflows/`**
-    Contains our CI/CD pipeline. Automatically runs a syntax check on our Ansible YAML files every time a team member makes a Pull Request.
-*   **`ansible.cfg`**
-    Turns off strict SSH host key checking. This stops Ansible from crashing when it tries to connect to a new device it hasn’t seen before.
-*   **`inventory.yaml`**
-    The phonebook for the project. It holds the IP addresses, usernames, passwords, and connection methods for both the Cisco router and the Linux server.
-*   **`main_playbook.yml`**
-    The main entry point. When you run the project, this file executes first and tells Ansible to run the router tasks first, followed by the Linux server tasks.
-*   **`router_tasks.yml`** *(Student 2 & 3)*
-    The empty file where the network configurations go (setting up IPs, local user accounts, banners, interface descriptions, and static routes).
-*   **`linux_tasks.yml`** *(Student 4 & 5)*
-    The empty file where the Linux automation goes. It will run commands to grab system stats like hostname, CPU usage, RAM, and the top 5 running processes, outputting them to a JSON file.
-*   **`display_parser.py`**
-    A custom Python script that ingests the raw JSON output from the Linux server metrics and renders a human-readable system health dashboard directly to the terminal.
-*   **`docker-compose.yml` & `Dockerfile`**
-    Spins up a custom, lightweight Ubuntu container with SSH and Python pre-installed. This acts as our "target Linux server" so we have something live to test our scripts against without breaking our actual laptops.
-*   **`pre_flight.py`**
-    A Python script that pings our target devices (Router and Docker container) to verify they are awake before we allow Ansible to run.
+* **DILLAN REVADA TOP (A23CS0290)** - *Lead:* Made foundational infrastructure by creating the Dockerfile, docker-compose.yml, inventory.yaml, ansible.cfg, and .gitignore files to ensure a stable, reproducible deployment environment. Developed and maintained the main_playbook.yml to orchestrate all team modules, while managing legacy dependency resolution to ensure compatibility with constrained lab environments. Authored all project documentation, including the comprehensive README.md and requirements.txt. Developed the pre_flight.py port-verification engine and the display_parser.py JSON aggregation dashboard, while providing the technical oversight required to perform final repository merges and structural integration of all team contributions.
+* **DANIEL Tri Hendarto Tanra (A23CS4040)** - *Network Engineer:* Handled initial Cisco IOS configurations, including GigabitEthernet IP assignments, local user privilege escalation, and MOTD banner deployment.
+* **ABDELRAHMAN Osama Said Abdelmobdy (A23CS4001)** - *Systems Engineer:* Developed Linux automation tasks for host metadata, tracking CPU architecture, memory allocation, and system timestamps.
+* **KHALID (A23CS0290)** - *Network Engineer:* Managed core routing and interface analytics, including static IPv4 route propagation, interface descriptions, and hardware facts retrieval.
+* **MUHAMMAD ANGWIN SAYRESTIAN (A20EC0313)** - *Systems Engineer:* Automated continuous Linux health metrics, tracking disk utilization, active user sessions, and high-cpu top 5 processes.
 
 ---
 
-## How It Works
+## Project Overview
 
-The entire project runs in a 4 step loop:
-
-    [ Computer ] ──(Runs Ansible)──► Reads inventory.yaml to find targets
-                                          │
-                                          ├──► 1. Connects to Router -> Applies router_tasks.yml
-                                          │
-                                          └──► 2. Connects to Docker Container -> Runs linux_tasks.yml
-                                                     ↳ Saves data to linux_stats_output.json
-                                                     ↳ display_parser.py reads JSON and prints stats to screen
-
-1. **The Sandbox:** You start the Docker container to create a fake, isolated Linux machine sitting on your laptop.
-2. **The Pre-Flight:** You run the Python script to ensure the network is reachable.
-3. **The Trigger:** You run the main Ansible playbook command.
-4. **The Network Phase:** Ansible looks at the inventory file, connects to the simulated router, pushes all the required network configurations, and pulls back the basic device info.
-5. **The Admin Phase:** Ansible connects straight into the running Docker container, collects the requested hardware and process stats, and saves them locally. Finally, the Python parser executes to display the neat summary to your terminal window.
-
----
+A comprehensive network automation project utilizing **Ansible**, **Docker**, and **Python** to provision a Cisco CSR1000v router and aggregate live health metrics from a Debian-based container.
 
 ## Project Requirements Fulfilled
 
 **Cisco Router Configuration:**
-- [ ] Configure IP Addresses & Interface Descriptions
-- [ ] Configure User Accounts & Banner Message
-- [ ] Configure Static Routes
-- [ ] Retrieve Device Information
+* [x] Configure IP Addresses & Interface Descriptions
+* [x] Configure User Accounts & Banner Message
+* [x] Configure Static Routes
+* [x] Retrieve Device Information
 
-**Ubuntu Linux Server Analytics:**
-- [ ] Hostname, Date, and Time
-- [ ] CPU and Memory (RAM) Usage
-- [ ] Disk Space Utilization
-- [ ] Logged-in Users & Top 5 Processes by CPU
+
+
+**Ubuntu/Debian Linux Server Analytics:**
+* [x] Hostname, Date, and Time
+* [x] CPU and Memory (RAM) Usage
+* [x] Disk Space Utilization
+* [x] Logged-in Users & Top 5 Processes by CPU
+
+
+
+---
+
+## Architecture & System Documentation
+
+* **`.github/workflows/`**: Contains CI/CD pipeline for YAML linting and syntax validation.
+* **`ansible.cfg`**: Configures execution parameters, disabling strict SSH host key checking for seamless automation.
+* **`inventory.yaml`**: The infrastructure registry. Maps the `cisco_router` (192.168.56.102) to the `ios` network OS, securely handling `ansible_become` variables for privilege escalation via `cisco123!`.
+* **`main_playbook.yml`**: Orchestrates the execution flow, targeting Cisco hardware first, then pivoting to Linux subsystem metrics.
+* **`router_tasks.yml`**: Network module suite utilizing legacy-compatible `ios_config` modules for Ansible 2.9 compatibility.
+* **`linux_stats_output.json`**: The aggregated JSON datastore built via `combine()` filters.
+* **`display_parser.py`**: Custom Python parser that ingests JSON metrics and renders a human-readable health dashboard.
+* **`Dockerfile`**: Lightweight Debian-based target environment for consistent system analytics.
+* **`pre_flight.py`**: Network-socket verification script that validates reachability before playbook execution.
+
+---
+
 
 ---
 
 ## Dependencies
 
-To run this automation stack, you only need two things installed on your system:
+To execute this automation stack, the following software environment is required:
 
-1. **Docker & Docker Compose** (To host the target Linux test environment).
-2. **Ansible** (The core tool running the automation playbooks).
+* **Docker & Docker Compose**: Necessary to host the isolated Debian-based Linux test container.
+
+
+* **Ansible (v2.9+)**: The core automation engine responsible for executing the network and system configuration playbooks.
+
+
+* **Python 3**: Used for executing the `pre_flight.py` verification script and the `display_parser.py` analytics dashboard.
 
 ---
 
-## Quick Start
+## How It Works
 
-**1. Start the local Linux target container:**
-`docker-compose up -d --build`
+The project execution operates through a sequential automation loop:
 
-**2. Verify the network is reachable:**
-`python3 pre_flight.py`
+1. **The Sandbox Phase**: Deployment of the target Linux environment via `docker-compose` to create an isolated, reachable test machine.
 
-**3. Run the automation script:**
-`ansible-playbook main_playbook.yml`
 
-**4. Generate the terminal dashboard:**
-`python3 display_parser.py`
+2. **The Pre-Flight Check**: Execution of `pre_flight.py` to perform active socket verification, ensuring both the VirtualBox Cisco router and the Docker container are reachable before starting the playbook.
+
+
+3. **The Provisioning Phase**: Ansible reads `inventory.yaml` to establish secure connections. It first pushes network configurations to the Cisco router, utilizing `ios_config` modules for IP, banner, and static route deployment.
+
+
+4. **The Analytics Phase**: Ansible pivots to the Docker container, executing shell-based system tasks to scrape hardware telemetry, including CPU, memory, and disk utilization, then saves the results to `linux_stats_output.json`.
+
+
+5. **The Reporting Phase**: `display_parser.py` parses the generated JSON output and renders the finalized system health summary to the terminal.
+
+## Quick Start & Deployment Guide
+
+**1. Initialize the Target Infrastructure:**
+
+```bash
+docker-compose up -d --build
+
+```
+
+**2. Verify Network Reachability:**
+
+```bash
+python3 pre_flight.py
+
+```
+
+**3. Execute the Automation Stack:**
+
+```bash
+ansible-playbook main_playbook.yml
+
+```
+
+**4. Generate the Analytics Dashboard:**
+
+```bash
+python3 display_parser.py
+
+```
