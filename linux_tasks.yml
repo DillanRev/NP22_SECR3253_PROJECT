@@ -1,11 +1,6 @@
 ---
-# LINUX SERVER ANALYTICS
-# This file is the entry point imported by main_playbook.yml.
-# Each teammate's work lives in its own file and gets imported here,
-# the same way router_tasks_khalid.yml is split out on the router side.
-
 - name: Import Abdelrahman's tasks (Hostname, Date/Time, CPU, RAM)
   import_tasks: linux_tasks_abdelrahman.yml
 
-# - name: Import teammate's tasks (Disk Usage, Logged-in Users, Top 5 Processes)
-#   import_tasks: linux_tasks_<teammate_name>.yml
+- name: Import Angwin's tasks (Disk Usage, Users, Top Processes)
+  import_tasks: server_tasks_angwin.yaml
