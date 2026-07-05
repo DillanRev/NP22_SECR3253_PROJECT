@@ -4,7 +4,7 @@
   register: disk_usage
   changed_when: false
 
-#Grab users,
+#Grab users
 - name: 2. Grab Logged-in Users
   ansible.builtin.shell: who
   register: loggedin_users
@@ -15,6 +15,7 @@
   ansible.builtin.shell: "ps -eo pid,user,%cpu,command --sort=-%cpu | head -n 6"
   register: top5_cpu
   changed_when: false
+
 
 #Build stats dictionary
 - name: 4. Build a stats dictionary from the gathered data
