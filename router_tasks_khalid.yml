@@ -1,5 +1,5 @@
 ---
-#Interface Descriptions,
+# Interface Descriptions,
 # Static Routes, and Device Info Retrieval
 
 # -TASK 1: Configure Interface Descriptions
@@ -50,3 +50,7 @@
       Serial Number  : {{ ansible_net_serialnum }}
       Uptime         : {{ ansible_net_uptime }}
       ============================================
+
+- name: "KHALID | Display interface details"
+  ansible.builtin.debug:
+    msg: "{{ ansible_net_interfaces }}"
