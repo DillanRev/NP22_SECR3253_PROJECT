@@ -23,4 +23,7 @@
     lines:
       - ip address 192.168.1.100 255.255.255.0       
       - no shutdown
-    parents: interface GigabitEthernet1    
+    parents: interface GigabitEthernet1
+
+    - name: Import Khalid's tasks (Interface Descriptions, Static Route, Device Info)
+  import_tasks: router_tasks_khalid.yml
