@@ -1,11 +1,21 @@
 import subprocess
 import sys
+import platform
 
 targets = {"Linux Server": "127.0.0.1", "Cisco Router": "192.168.56.102"}
 
 def check_ping(hostname, ip):
     print(f"Testing connection to {hostname} ({ip})...")
-    response = subprocess.run(['ping', '-c', '1', '-W', '1', ip], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    param = '-n' if platform.system().lower() == 'windows' else '-c'
+    timeout_param = '-w' if platform.system().lower() == 'windows' else '-W'
+    
+    timeout_val = '1000' if platform.system().lower() == 'windows' else '1'
+    
+    response = subprocess.run(
+        ['ping', param, '1', timeout_param, timeout_val, ip], 
+        stdout=subprocess.PIPE, 
+        stderr=subprocess.PIPE
+    )
     
     if response.returncode == 0:
         print(f"[OK] {hostname} is reachable.\n")
