@@ -47,12 +47,14 @@
   stat:
     path: "{{playbook_dir}}/linux_stats_output.json"
   register: existing_output_t5
+  delegate_to: localhost
 
 - name: 7. Load existing JSON output if it exists
   slurp:
     src: "{{playbook_dir}}/linux_stats_output.json"
   register: existing_output1_t5
   when: existing_output_t5.stat.exists
+  delegate_to: localhost
 
 - name: 8. Merge my stats into existing data
   set_fact:
@@ -67,7 +69,7 @@
 - name: 10. Write merged stats to output JSON
   copy:
     content: "{{ combined_stats_t5 | to_nice_json }}"
-    dest: "./linux_stats_output.json"
+    dest: "{{playbook_dir}}/linux_stats_output.json"
   delegate_to: localhost
 
 # -TASK 11: Final Output Display
