@@ -1,6 +1,6 @@
 # SECR3253 Network Programming - Group Automation Project
 # DILLAN REVADA A23CS0290
-# DANIEL
+# DANIEL Tri Hendarto Tanra A23CS4040
 # ABDELRAHMAN Osama Said Abdelmobdy A23CS4001
 # KHALID  A23CS4042
 # ANGWIN
