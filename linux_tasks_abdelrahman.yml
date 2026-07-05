@@ -3,35 +3,30 @@
 # Scope: Hostname, Current Date/Time, CPU Information, Memory (RAM) Usage
 
 # -TASK 1: Get Hostname
-
 - name: "ABDELRAHMAN | Get system hostname"
   command: hostname
   register: system_hostname
   changed_when: false
 
 # -TASK 2: Get Current Date and Time
-
 - name: "ABDELRAHMAN | Get current date and time"
   command: date "+%Y-%m-%d %H:%M:%S"
   register: system_datetime
   changed_when: false
 
 # -TASK 3: Get CPU Information
-
 - name: "ABDELRAHMAN | Get CPU information"
   shell: "lscpu | grep -E 'Model name|^CPU\\(s\\)|CPU MHz' | sed 's/^[ \\t]*//'"
   register: cpu_info
   changed_when: false
 
 # -TASK 4: Get Memory (RAM) Usage
-
 - name: "ABDELRAHMAN | Get memory (RAM) usage"
   shell: "free -h | grep -E 'Mem|total'"
   register: ram_usage
   changed_when: false
 
 # -TASK 5: Build a stats dictionary from the gathered data
-
 - name: "ABDELRAHMAN | Build stats dictionary"
   set_fact:
     abdelrahman_stats:
@@ -41,7 +36,6 @@
       ram: "{{ ram_usage.stdout_lines | join(' | ') }}"
 
 # -TASK 6: Show the gathered stats in the terminal for a quick sanity check
-
 - name: "ABDELRAHMAN | Display gathered stats"
   debug:
     msg: |
@@ -55,17 +49,18 @@
       ============================================
 
 # -TASK 7: Merge into linux_stats_output.json 
-
 - name: "ABDELRAHMAN | Check if output JSON already exists"
   stat:
     path: "{{ playbook_dir }}/linux_stats_output.json"
   register: existing_output
+  delegate_to: localhost
 
 - name: "ABDELRAHMAN | Load existing output JSON (if any)"
   slurp:
     src: "{{ playbook_dir }}/linux_stats_output.json"
   register: existing_output_raw
   when: existing_output.stat.exists
+  delegate_to: localhost
 
 - name: "ABDELRAHMAN | Merge my stats into existing data"
   set_fact:
@@ -81,3 +76,4 @@
   copy:
     content: "{{ combined_stats | to_nice_json }}"
     dest: "{{ playbook_dir }}/linux_stats_output.json"
+  delegate_to: localhost
