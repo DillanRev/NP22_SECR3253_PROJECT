@@ -1,0 +1,29 @@
+- name: 1. Grab Disk Usage (Cek sisa penyimpanan)
+      ansible.builtin.shell: df -h
+      register: disk_usage
+
+    - name: 2. Grab Logged-in Users (Cek siapa yang lagi login)
+      ansible.builtin.shell: who
+      register: loggedin_users
+
+    - name: 3. Grab Top 5 CPU Processes (Cek 5 aplikasi paling boros CPU)
+      # Pake head -n 6 karena baris pertama itu judul/header tabelnya
+      ansible.builtin.shell: ps -eo pid,user,%cpu,command --sort=-%cpu | head -n 6
+      register: top5_cpu
+
+    # --- MERGE DISPLAY (GABUNGIN SAMA OUTPUT TUGAS 4) ---
+    - name: 4. Display All Server Info (Merge Task 4 & Task 5)
+      ansible.builtin.debug:
+        msg: 
+          # Nanti hasil temen lu (Task 4) taro di atas sini ya, contohnya:
+          # - "Hostname: {{ host_name.stdout }}"
+          # - "Date/Time: {{ date_time.stdout }}"
+          
+          # Ini hasil lu (Task 5)
+          - "========== DISK USAGE =========="
+          - "{{ disk_usage.stdout_lines }}"
+          - "========== LOGGED-IN USERS =========="
+          - "{{ loggedin_users.stdout_lines }}"
+          - "========== TOP 5 CPU PROCESSES =========="
+          - "{{ top5_cpu.stdout_lines }}"
+    # --- AKHIR BAGIAN TUGAS 5 ---
