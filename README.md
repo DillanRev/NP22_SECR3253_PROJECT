@@ -4,7 +4,7 @@
 
 ## Team Members & Collaboration Roles
 
-* **DILLAN REVADA TOP (A23CS0290)** - *Lead Architect & Python Integration:* Engineered the `pre_flight.py` port-verification script, developed the `display_parser.py` JSON aggregation dashboard, built the Debian Dockerfile target environment, and managed the legacy Ansible module syntax and final repository merges.
+* **DILLAN REVADA TOP (A23CS0290)** - *Lead:* Made foundational infrastructure by creating the Dockerfile, docker-compose.yml, inventory.yaml, ansible.cfg, and .gitignore files to ensure a stable, reproducible deployment environment. Developed and maintained the main_playbook.yml to orchestrate all team modules, while managing legacy dependency resolution to ensure compatibility with constrained lab environments. Authored all project documentation, including the comprehensive README.md and requirements.txt. Developed the pre_flight.py port-verification engine and the display_parser.py JSON aggregation dashboard, while providing the technical oversight required to perform final repository merges and structural integration of all team contributions.
 * **DANIEL Tri Hendarto Tanra (A23CS4040)** - *Network Engineer:* Handled initial Cisco IOS configurations, including GigabitEthernet IP assignments, local user privilege escalation, and MOTD banner deployment.
 * **ABDELRAHMAN Osama Said Abdelmobdy (A23CS4001)** - *Systems Engineer:* Developed Linux automation tasks for host metadata, tracking CPU architecture, memory allocation, and system timestamps.
 * **KHALID (A23CS0290)** - *Network Engineer:* Managed core routing and interface analytics, including static IPv4 route propagation, interface descriptions, and hardware facts retrieval.
