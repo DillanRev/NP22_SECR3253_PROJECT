@@ -5,35 +5,35 @@
 # -TASK 1: Get Hostname
 
 - name: "ABDELRAHMAN | Get system hostname"
-  ansible.builtin.command: hostname
+  command: hostname
   register: system_hostname
   changed_when: false
 
 # -TASK 2: Get Current Date and Time
 
 - name: "ABDELRAHMAN | Get current date and time"
-  ansible.builtin.command: date "+%Y-%m-%d %H:%M:%S"
+  command: date "+%Y-%m-%d %H:%M:%S"
   register: system_datetime
   changed_when: false
 
 # -TASK 3: Get CPU Information
 
 - name: "ABDELRAHMAN | Get CPU information"
-  ansible.builtin.shell: "lscpu | grep -E 'Model name|^CPU\\(s\\)|CPU MHz' | sed 's/^[ \\t]*//'"
+  shell: "lscpu | grep -E 'Model name|^CPU\\(s\\)|CPU MHz' | sed 's/^[ \\t]*//'"
   register: cpu_info
   changed_when: false
 
 # -TASK 4: Get Memory (RAM) Usage
 
 - name: "ABDELRAHMAN | Get memory (RAM) usage"
-  ansible.builtin.shell: "free -h | grep -E 'Mem|total'"
+  shell: "free -h | grep -E 'Mem|total'"
   register: ram_usage
   changed_when: false
 
 # -TASK 5: Build a stats dictionary from the gathered data
 
 - name: "ABDELRAHMAN | Build stats dictionary"
-  ansible.builtin.set_fact:
+  set_fact:
     abdelrahman_stats:
       hostname: "{{ system_hostname.stdout }}"
       time: "{{ system_datetime.stdout }}"
@@ -43,7 +43,7 @@
 # -TASK 6: Show the gathered stats in the terminal for a quick sanity check
 
 - name: "ABDELRAHMAN | Display gathered stats"
-  ansible.builtin.debug:
+  debug:
     msg: |
       ============================================
          LINUX SYSTEM STATS (ABDELRAHMAN'S PART)
@@ -54,32 +54,30 @@
       RAM Usage  : {{ abdelrahman_stats.ram }}
       ============================================
 
-# -TASK 7: Merge into linux_stats_output.json without wiping out
-# the disk / users / processes keys that the other teammate adds.
-# If the file doesn't exist yet, we just write our own keys first.
+# -TASK 7: Merge into linux_stats_output.json 
 
 - name: "ABDELRAHMAN | Check if output JSON already exists"
-  ansible.builtin.stat:
+  stat:
     path: "{{ playbook_dir }}/linux_stats_output.json"
   register: existing_output
 
 - name: "ABDELRAHMAN | Load existing output JSON (if any)"
-  ansible.builtin.slurp:
+  slurp:
     src: "{{ playbook_dir }}/linux_stats_output.json"
   register: existing_output_raw
   when: existing_output.stat.exists
 
 - name: "ABDELRAHMAN | Merge my stats into existing data"
-  ansible.builtin.set_fact:
+  set_fact:
     combined_stats: "{{ (existing_output_raw.content | b64decode | from_json) | combine(abdelrahman_stats) }}"
   when: existing_output.stat.exists
 
 - name: "ABDELRAHMAN | Use only my stats if no file exists yet"
-  ansible.builtin.set_fact:
+  set_fact:
     combined_stats: "{{ abdelrahman_stats }}"
   when: not existing_output.stat.exists
 
 - name: "ABDELRAHMAN | Write merged stats to output JSON"
-  ansible.builtin.copy:
+  copy:
     content: "{{ combined_stats | to_nice_json }}"
     dest: "{{ playbook_dir }}/linux_stats_output.json"

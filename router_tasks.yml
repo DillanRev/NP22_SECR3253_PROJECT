@@ -1,10 +1,9 @@
 # ROUTER CONFIGURATION TASKS
-# Daniel Tri Hendarto Tanra
 
 - name: Create administrative user account
-  cisco.ios.ios_user:
+  ios_user:
     name: admin
-    password: password
+    configured_password: password
     privilege: 15
     state: present
 
@@ -19,16 +18,11 @@
     state: present
 
 - name: Configure IP Address on Interface
-  cisco.ios.ios_config:
+  ios_config:
     lines:
       - ip address 192.168.1.100 255.255.255.0       
       - no shutdown
-    parents: interface GigabitEthernet1
+    parents: interface GigabitEthernet2
 
-- name: VERIFICATION - Check interface status
-  cisco.ios.ios_command:
-    commands: show ip interface brief
-  register: interface_status
-
-    - name: Import Khalid's tasks (Interface Descriptions, Static Route, Device Info)
+- name: Import Khalid's tasks (Interface Descriptions, Static Route, Device Info)
   import_tasks: router_tasks_khalid.yml

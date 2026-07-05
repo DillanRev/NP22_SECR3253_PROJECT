@@ -1,7 +1,7 @@
 import subprocess
 import sys
 
-targets = {"Linux Server": "127.0.0.1", "Cisco Router": "192.168.1.100"}
+targets = {"Linux Server": "127.0.0.1", "Cisco Router": "192.168.56.102"}
 
 def check_ping(hostname, ip):
     print(f"Testing connection to {hostname} ({ip})...")

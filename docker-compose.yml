@@ -1,6 +1,8 @@
-version: '3.8'
+version: '3.3'
 services:
   linux-target:
-    image: ubuntu:latest
+    build: .
     container_name: linux_server_target
-    command: sleep infinity
+    ports:
+      - "2222:22"
+    command: /usr/sbin/sshd -D

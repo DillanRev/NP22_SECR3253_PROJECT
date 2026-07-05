@@ -1,77 +1,77 @@
-#Grab disk usage,
+---
+# ANGWIN | Linux System Analytics (Fixed by Architect)
+
+# -TASK 1: Grab disk usage
 - name: 1. Grab Disk Usage
-  ansible.builtin.shell: df -h
+  shell: df -h
   register: disk_usage
   changed_when: false
 
-#Grab users
+# -TASK 2: Grab users
 - name: 2. Grab Logged-in Users
-  ansible.builtin.shell: who
+  shell: who
   register: loggedin_users
   changed_when: false
 
-#Grab top 5 CPU processes,
+# -TASK 3: Grab top 5 CPU processes
 - name: 3. Grab Top 5 CPU Processes 
-  ansible.builtin.shell: "ps -eo pid,user,%cpu,command --sort=-%cpu | head -n 6"
+  shell: "ps -eo pid,user,%cpu,command --sort=-%cpu | head -n 6"
   register: top5_cpu
   changed_when: false
 
-
-#Build stats dictionary
+# -TASK 4: Build stats dictionary (Keys fixed to match Python parser)
 - name: 4. Build a stats dictionary from the gathered data
-  ansible.builtin.set_fact:
+  set_fact:
     task5_stats:
-      disk_usage: "{{ disk_usage.stdout_lines }}"
-      loggedin_users: "{{ loggedin_users.stdout_lines }}"
-      top5_cpu: "{{ top5_cpu.stdout_lines }}"
+      disk: "{{ disk_usage.stdout_lines | join('\n') }}"
+      users: "{{ loggedin_users.stdout_lines | join('\n') }}"
+      processes: "{{ top5_cpu.stdout_lines | join('\n') }}"
 
-
+# -TASK 5: Display gathered stats
 - name: 5. Display gathered stats
-  ansible.builtin.debug:
+  debug:
     msg: |
       ============================================
-         LINUX SYSTEM STATS (TASK 5)
+         LINUX SYSTEM STATS (ANGWIN'S PART)
       ============================================
-      Disk Usage   : {{ task5_stats.disk_usage }}
-      Logged-in Users  : {{ task5_stats.loggedin_users }}
-      Top 5 CPU Processes  : {{ task5_stats.top5_cpu }}
+      Disk Usage       : 
+      {{ task5_stats.disk }}
+      Logged-in Users  : 
+      {{ task5_stats.users }}
+      Top 5 CPU Procs  : 
+      {{ task5_stats.processes }}
       ============================================
 
-
-
-# merge into linux_stats_output.json without wiping out the 
-# disk / users / processes keys that the other teammate adds.
-
-- name: 6. Check if JSON Outuput already exists
-  ansible.builtin.stat:
+# -TASK 6-10: Merge into linux_stats_output.json
+- name: 6. Check if JSON Output already exists
+  stat:
     path: "{{playbook_dir}}/linux_stats_output.json"
   register: existing_output_t5
 
 - name: 7. Load existing JSON output if it exists
-  ansible.builtin.slurp:
+  slurp:
     src: "{{playbook_dir}}/linux_stats_output.json"
   register: existing_output1_t5
   when: existing_output_t5.stat.exists
 
 - name: 8. Merge my stats into existing data
-  ansible.builtin.set_fact:
+  set_fact:
     combined_stats_t5: "{{ (existing_output1_t5.content | b64decode | from_json) | combine(task5_stats) }}"
   when: existing_output_t5.stat.exists
 
 - name: 9. Use only my stats if no file exists yet
-  ansible.builtin.set_fact:
+  set_fact:
     combined_stats_t5: "{{ task5_stats }}"
   when: not existing_output_t5.stat.exists
 
 - name: 10. Write merged stats to output JSON
-  ansible.builtin.copy:
+  copy:
     content: "{{ combined_stats_t5 | to_nice_json }}"
     dest: "{{playbook_dir}}/linux_stats_output.json"
 
-# Final Output Display
-
+# -TASK 11: Final Output Display
 - name: 11. Final merged display of linux_stats_output.json
-  ansible.builtin.debug:
+  debug:
     msg: |
       ============================================
          FINAL MERGED LINUX SYSTEM STATS
