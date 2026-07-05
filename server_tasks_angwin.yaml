@@ -1,29 +1,79 @@
-- name: 1. Grab Disk Usage (Cek sisa penyimpanan)
-      ansible.builtin.shell: df -h
-      register: disk_usage
+#Grab disk usage,
+- name: 1. Grab Disk Usage
+  ansible.builtin.shell: df -h
+  register: disk_usage
+  changed_when: false
 
-    - name: 2. Grab Logged-in Users (Cek siapa yang lagi login)
-      ansible.builtin.shell: who
-      register: loggedin_users
+#Grab users,
+- name: 2. Grab Logged-in Users
+  ansible.builtin.shell: who
+  register: loggedin_users
+  changed_when: false
 
-    - name: 3. Grab Top 5 CPU Processes (Cek 5 aplikasi paling boros CPU)
-      # Pake head -n 6 karena baris pertama itu judul/header tabelnya
-      ansible.builtin.shell: ps -eo pid,user,%cpu,command --sort=-%cpu | head -n 6
-      register: top5_cpu
+#Grab top 5 CPU processes,
+- name: 3. Grab Top 5 CPU Processes 
+  ansible.builtin.shell: "ps -eo pid,user,%cpu,command --sort=-%cpu | head -n 6"
+  register: top5_cpu
+  changed_when: false
 
-    # --- MERGE DISPLAY (GABUNGIN SAMA OUTPUT TUGAS 4) ---
-    - name: 4. Display All Server Info (Merge Task 4 & Task 5)
-      ansible.builtin.debug:
-        msg: 
-          # Nanti hasil temen lu (Task 4) taro di atas sini ya, contohnya:
-          # - "Hostname: {{ host_name.stdout }}"
-          # - "Date/Time: {{ date_time.stdout }}"
-          
-          # Ini hasil lu (Task 5)
-          - "========== DISK USAGE =========="
-          - "{{ disk_usage.stdout_lines }}"
-          - "========== LOGGED-IN USERS =========="
-          - "{{ loggedin_users.stdout_lines }}"
-          - "========== TOP 5 CPU PROCESSES =========="
-          - "{{ top5_cpu.stdout_lines }}"
-    # --- AKHIR BAGIAN TUGAS 5 ---
+#Build stats dictionary
+- name: 4. Build a stats dictionary from the gathered data
+  ansible.builtin.set_fact:
+    task5_stats:
+      disk_usage: "{{ disk_usage.stdout_lines }}"
+      loggedin_users: "{{ loggedin_users.stdout_lines }}"
+      top5_cpu: "{{ top5_cpu.stdout_lines }}"
+
+
+- name: 5. Display gathered stats
+  ansible.builtin.debug:
+    msg: |
+      ============================================
+         LINUX SYSTEM STATS (TASK 5)
+      ============================================
+      Disk Usage   : {{ task5_stats.disk_usage }}
+      Logged-in Users  : {{ task5_stats.loggedin_users }}
+      Top 5 CPU Processes  : {{ task5_stats.top5_cpu }}
+      ============================================
+
+
+
+# merge into linux_stats_output.json without wiping out the 
+# disk / users / processes keys that the other teammate adds.
+
+- name: 6. Check if JSON Outuput already exists
+  ansible.builtin.stat:
+    path: "{{playbook_dir}}/linux_stats_output.json"
+  register: existing_output_t5
+
+- name: 7. Load existing JSON output if it exists
+  ansible.builtin.slurp:
+    src: "{{playbook_dir}}/linux_stats_output.json"
+  register: existing_output1_t5
+  when: existing_output_t5.stat.exists
+
+- name: 8. Merge my stats into existing data
+  ansible.builtin.set_fact:
+    combined_stats_t5: "{{ (existing_output1_t5.content | b64decode | from_json) | combine(task5_stats) }}"
+  when: existing_output_t5.stat.exists
+
+- name: 9. Use only my stats if no file exists yet
+  ansible.builtin.set_fact:
+    combined_stats_t5: "{{ task5_stats }}"
+  when: not existing_output_t5.stat.exists
+
+- name: 10. Write merged stats to output JSON
+  ansible.builtin.copy:
+    content: "{{ combined_stats_t5 | to_nice_json }}"
+    dest: "{{playbook_dir}}/linux_stats_output.json"
+
+# Final Output Display
+
+- name: 11. Final merged display of linux_stats_output.json
+  ansible.builtin.debug:
+    msg: |
+      ============================================
+         FINAL MERGED LINUX SYSTEM STATS
+      ============================================
+      {{ combined_stats_t5 | to_nice_yaml }}
+      ============================================
